@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PublicacionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::get('/posts', [PublicacionController::class, 'index'])->name('posts.index');
+Route::post('/posts', [PublicacionController::class, 'store'])->name('posts.store');
+Route::get('/posts/{id}', [PublicacionController::class, 'show'])->name('posts.show');
+Route::put('/posts/{id}', [PublicacionController::class, 'update'])->name('posts.update');
+Route::delete('/posts/{id}', [PublicacionController::class, 'destroy'])->name('posts.destroy');
