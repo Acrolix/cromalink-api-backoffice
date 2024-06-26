@@ -32,7 +32,6 @@ class User extends Authenticatable
         'staff',
         'active',
         'created_at',
-        'updated_at',
     ];
 
     /**

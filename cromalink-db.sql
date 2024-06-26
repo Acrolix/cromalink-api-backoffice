@@ -15,6 +15,7 @@ CREATE TABLE users (
     picture VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
     active BOOLEAN DEFAULT TRUE,
     staff BOOLEAN DEFAULT FALSE
@@ -47,6 +48,7 @@ CREATE TABLE publications (
     content TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_by INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -54,7 +56,7 @@ CREATE TABLE publications (
 CREATE TABLE reactions (
     publication_id INT,
     reaction_by INT,
-    type ENUM('me gusta', 'no me gusta') NOT NULL,
+    type ENUM(1,2,3,4,5]) NOT NULL,
     PRIMARY KEY (publication_id, reaction_by, type),
     FOREIGN KEY (publication_id) REFERENCES publications(id) ON DELETE CASCADE,
     FOREIGN KEY (reaction_by) REFERENCES users(id) ON DELETE CASCADE
