@@ -20,7 +20,13 @@ class Publicacion extends Model
 
     public function created_by()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')
+                    ->select(['id', 'first_name', 'last_name', 'username', 'picture', 'country']);
+    }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reaccion::class, 'publication_id');
     }
 
     public function casts()
