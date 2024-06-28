@@ -16,9 +16,9 @@ class ComentarioFactory extends Factory
     public function definition()
     {
         return [
-            'publication_id' => $this->faker->numberBetween(1, count(Publicacion::all())),
-            'created_by' => $this->faker->numberBetween(1, count(User::all())),
-            'content' => $this->faker->text(200),
+            'publication_id' => Publicacion::all()->random()->id,
+            'created_by' => User::all()->random()->id,
+            'content' => $this->faker->text(rand(50, 200)),
         ];
     }
 }

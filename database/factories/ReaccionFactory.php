@@ -16,8 +16,8 @@ class ReaccionFactory extends Factory
     public function definition()
     {
         return [
-            'publication_id' => $this->faker->numberBetween(1, count(Publicacion::all())),
-            'reaction_by' => $this->faker->numberBetween(1, count(User::all())),
+            'publication_id' => Publicacion::all()->random()->id,
+            'reaction_by' => User::all()->random()->id,
         ];
     }
 }

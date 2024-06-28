@@ -44,7 +44,7 @@ class PublicacionFactory extends Factory
             'content' => $this->faker->paragraph(),
             'image' => $this->faker->randomElement(self::imagenesEjemplo),
             'created_at' => $this->faker->dateTime(),
-            'created_by' => $this->faker->numberBetween(1, User::count()),
+            'created_by' => User::all()->random()->id,
         ];
     }
 }
