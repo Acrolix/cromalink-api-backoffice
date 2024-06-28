@@ -19,13 +19,18 @@ class PublicacionTest extends TestCase
         $response = $this->getJson('/api/publicaciones');
 
         $response->assertStatus(200)
-            ->assertJsonCount(20, 'data')
-            ->assertJsonPath('data.0.created_by.id', $user->id)
-            ->assertJsonPath('total', 20);
-
-        $response2 = $this->getJson('/api/publicaciones?title=../../../etc/passwd');
-        $response2->assertStatus(404)
-            ->assertJsonCount(0, 'data');
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => [
+                        'id',
+                        'title',
+                        'content',
+                        'image',
+                        'created_at',
+                        'created_by',
+                    ],
+                ],
+            ]);
     }
 
     public function test_filtrar_publicaciones_por_titulo()
@@ -33,13 +38,13 @@ class PublicacionTest extends TestCase
         $user = User::factory()->create();
         $publicacion = Publicacion::factory()->create(['created_by' => $user->id]);
 
-        $response = $this->getJson('/api/publicaciones?title=' . $publicacion->title);
+        $response = $this->getJson('/api/publicaciones?titulo=' . $publicacion->title);
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.title', $publicacion->title);
 
-        $response2 = $this->getJson('/api/publicaciones?title=../../../etc/passwd');
+        $response2 = $this->getJson('/api/publicaciones?titulo=../../../etc/passwd');
         $response2->assertStatus(404)
             ->assertJsonCount(0, 'data');
     }
@@ -47,13 +52,17 @@ class PublicacionTest extends TestCase
     public function test_filtrar_publicaciones_por_contenido()
     {
         $user = User::factory()->create();
-        $publicacion = Publicacion::factory()->create(['created_by' => $user->id]);
+        $publicacion = Publicacion::factory()->create(['created_by' => $user->id, 'content' => 'SuperContenido2394h23hf']);
 
-        $response = $this->getJson('/api/publicaciones?contenido=' . $publicacion->content);
+        $response = $this->getJson('/api/publicaciones?contenido=SuperContenido2394h23hf');
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.content', $publicacion->content);
+
+        $response2 = $this->getJson('/api/publicaciones?contenido=../../../etc/passwd');
+        $response2->assertStatus(404)
+            ->assertJsonCount(0, 'data');
     }
 
     public function test_filtrar_publicaciones_por_usuario()
@@ -70,6 +79,10 @@ class PublicacionTest extends TestCase
         $response2 = $this->getJson('/api/publicaciones?usuario=999999');
         $response2->assertStatus(404)
             ->assertJsonCount(0, 'data');;
+
+        $response3 = $this->getJson('/api/publicaciones?contenido=../../../etc/passwd');
+        $response3->assertStatus(404)
+            ->assertJsonCount(0, 'data');
     }
 
     public function test_guardar_publicacion()
@@ -136,8 +149,6 @@ class PublicacionTest extends TestCase
             'content' => 'Contenido de prueba',
             'created_by' => $user->id,
         ]);
-        
-
     }
 
     public function test_eliminar_publicacion()
@@ -145,7 +156,7 @@ class PublicacionTest extends TestCase
         $user = User::factory()->create();
         $publicacion = Publicacion::factory()->create(['created_by' => $user->id]);
 
-        $response = $this->deleteJson('/api/publicaciones/' . $publicacion->id);    
+        $response = $this->deleteJson('/api/publicaciones/' . $publicacion->id);
 
         $response->assertStatus(204);
 

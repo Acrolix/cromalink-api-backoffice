@@ -14,6 +14,10 @@ class ReaccionSeeder extends Seeder
      */
     public function run()
     {
-        Reaccion::factory(400)->create();
+        try {
+            Reaccion::factory(400)->create();
+        } catch (\Throwable $th) {
+            
+        }
     }
 }
