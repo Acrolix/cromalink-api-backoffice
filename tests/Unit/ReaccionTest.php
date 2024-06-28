@@ -42,7 +42,7 @@ class ReaccionTest extends TestCase
         $response = $this->deleteJson('/api/reacciones/'. $publication->id, [
             'reaction_by' => $user->id,
         ]);
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         
         $this->assertDatabaseMissing('reactions', [
             'publication_id' => $publication->id,

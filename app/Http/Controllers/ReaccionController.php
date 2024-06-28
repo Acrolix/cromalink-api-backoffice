@@ -32,6 +32,6 @@ class ReaccionController extends Controller
 
         $publication->reactions()->where('reaction_by', $user->id)->delete();
 
-        return response()->json([], 200);
+        return response(null, 204);
     }
 }
