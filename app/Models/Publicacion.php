@@ -14,6 +14,7 @@ class Publicacion extends Model
     protected $fillable = [
         'title',
         'content',
+        'image',
         'created_at',
         'created_by',
     ];

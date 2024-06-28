@@ -10,8 +10,8 @@ class PublicacionController extends Controller
     public function filtrar(Request $request)
     {
         $where = [];
-        if ($request->has('title')) $where[] = ["title", "like", "%" . $request->title . "%"];
-        if ($request->has('content')) $where[] = ["content", "like", "%" . $request->content . "%"];
+        if ($request->has('titulo')) $where[] = ["title", "like", "%" . $request->titulo . "%"];
+        if ($request->has('contenido')) $where[] = ["content", "like", "%" . $request->contenido . "%"];
         if ($request->has('usuario')) $where[] = ["created_by", "=", $request->usuario];
 
         $publicaciones = [];
@@ -32,6 +32,7 @@ class PublicacionController extends Controller
             $publicacion = Publicacion::create([
                 'title' => $request->title,
                 'content' => $request->content,
+                'image' => $request->image,
                 'created_by' => $request->created_by,
             ]);
         } catch (\Exception $e) {
