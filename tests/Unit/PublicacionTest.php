@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Publicacion;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PublicacionTest extends TestCase
