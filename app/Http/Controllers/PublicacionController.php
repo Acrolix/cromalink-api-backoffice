@@ -70,8 +70,8 @@ class PublicacionController extends Controller
         $publicacion = Publicacion::find($id);
         if ($publicacion) {
             $publicacion->delete();
-            return response(204);
+            return response(null, 204);
         }
-        return response()->json([], 404);
+        return response(null, 404);
     }
 }

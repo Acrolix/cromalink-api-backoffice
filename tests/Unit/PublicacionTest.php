@@ -147,7 +147,7 @@ class PublicacionTest extends TestCase
 
         $response = $this->deleteJson('/api/publicaciones/' . $publicacion->id);    
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
 
         $this->assertDatabaseMissing('publications', [
             'id' => $publicacion->id,
