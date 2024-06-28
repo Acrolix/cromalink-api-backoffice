@@ -59,7 +59,10 @@ class User extends Authenticatable
     public function publicaciones()
     {
         return $this->hasMany(Publicacion::class, 'created_by');
-    }
+    }   
 
-    
+    public function reactions()
+    {
+        return $this->hasMany(Reaccion::class, 'reaction_by');
+    }
 }
