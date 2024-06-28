@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\PublicacionController;
 use App\Http\Controllers\ReaccionController;
 use Illuminate\Support\Facades\Route;
@@ -15,4 +16,11 @@ Route::group(['prefix' => 'publicaciones'], function () {
 Route::group(['prefix' => 'reacciones'], function () {
     Route::post('/', [ReaccionController::class, 'setLike'])->name('reacciones.setLike');
     Route::delete('/{id}', [ReaccionController::class, 'unsetLike'])->name('reacciones.unsetLike');
+});
+
+Route::group(['prefix' => 'comentarios'], function () {
+    Route::get('/{id}', [ComentarioController::class, 'listar'])->name('comentarios.listar');
+    Route::post('/', [ComentarioController::class, 'guardar'])->name('comentarios.guardar');
+    Route::put('/{id}', [ComentarioController::class, 'actualizar'])->name('comentarios.actualizar');
+    Route::delete('/{id}', [ComentarioController::class, 'eliminar'])->name('comentarios.eliminar');
 });
