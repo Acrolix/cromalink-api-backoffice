@@ -18,9 +18,20 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',
+        'first_name',
+        'last_name',
+        'username',
+        'date_of_birth',
+        'biography',
+        'phone',
+        'country',
+        'picture',
+        'last_login',
         'password',
+        'staff',
+        'active',
+        'created_at',
     ];
 
     /**
@@ -29,8 +40,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+
         'password',
+        'phone',
         'remember_token',
+
     ];
 
     /**
@@ -41,4 +55,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function publicaciones()
+    {
+        return $this->hasMany(Publicacion::class, 'created_by');
+    }   
+
+    public function reactions()
+    {
+        return $this->hasMany(Reaccion::class, 'reaction_by');
+    }
 }

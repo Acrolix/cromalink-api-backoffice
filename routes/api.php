@@ -1,19 +1,26 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\PublicacionController;
+use App\Http\Controllers\ReaccionController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+Route::group(['prefix' => 'publicaciones'], function () {
+    Route::get('/', [PublicacionController::class, 'filtrar'])->name('publicaciones.filtrar');
+    Route::post('/', [PublicacionController::class, 'guardar'])->name('publicaciones.guardar');
+    Route::get('/{id}', [PublicacionController::class, 'obtener'])->name('publicaciones.obtener');
+    Route::put('/{id}', [PublicacionController::class, 'actualizar'])->name('publicaciones.actualizar');
+    Route::delete('/{id}', [PublicacionController::class, 'eliminar'])->name('publicaciones.eliminar');
+});
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['prefix' => 'reacciones'], function () {
+    Route::post('/', [ReaccionController::class, 'setLike'])->name('reacciones.setLike');
+    Route::delete('/{id}', [ReaccionController::class, 'unsetLike'])->name('reacciones.unsetLike');
+});
+
+Route::group(['prefix' => 'comentarios'], function () {
+    Route::get('/{id}', [ComentarioController::class, 'listar'])->name('comentarios.listar');
+    Route::post('/', [ComentarioController::class, 'guardar'])->name('comentarios.guardar');
+    Route::put('/{id}', [ComentarioController::class, 'actualizar'])->name('comentarios.actualizar');
+    Route::delete('/{id}', [ComentarioController::class, 'eliminar'])->name('comentarios.eliminar');
 });
