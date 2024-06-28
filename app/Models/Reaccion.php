@@ -10,6 +10,7 @@ class Reaccion extends Model
     use HasFactory;
 
     protected $table = 'reactions';
+    public $timestamps = false;
 
     protected $fillable = [
         'publication_id',
