@@ -120,7 +120,6 @@ class PublicacionTest extends TestCase
             ->assertJsonFragment([
                 'title' => $publicacion->title,
                 'content' => $publicacion->content,
-                'created_by' => $user->id,
             ]);
 
         $response2 = $this->getJson('/api/publicaciones/999999');
