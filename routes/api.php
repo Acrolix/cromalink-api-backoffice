@@ -15,7 +15,7 @@ Route::group(['prefix' => 'publicaciones'], function () {
 
 Route::group(['prefix' => 'reacciones'], function () {
     Route::post('/', [ReaccionController::class, 'setLike'])->name('reacciones.setLike');
-    Route::delete('/{id}', [ReaccionController::class, 'unsetLike'])->name('reacciones.unsetLike');
+    Route::delete('/', [ReaccionController::class, 'unsetLike'])->name('reacciones.unsetLike');
 });
 
 Route::group(['prefix' => 'comentarios'], function () {

@@ -16,7 +16,7 @@ class PublicacionController extends Controller
 
         $publicaciones = [];
         try {
-            $publicaciones = Publicacion::with(["created_by", "comments"])->withCount('reactions')->where($where)->paginate(20);
+            $publicaciones = Publicacion::with(["created_by", "comments"])->with('reactions')->where($where)->paginate(20);
         } catch (\Exception $e) {
             return response()->json(["errors" => $e->getMessage()], 500);
         }
