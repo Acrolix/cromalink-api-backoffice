@@ -22,7 +22,7 @@ class Comentario extends Model
         return $this->belongsTo(Publicacion::class, 'publication_id');
     }
 
-    public function user()
+    public function created_by()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
