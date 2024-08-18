@@ -10,7 +10,7 @@ class ComentarioController extends Controller
 
     public function listar($id)
     {
-        $comentarios = Comentario::where('publication_id', $id)->orderBy('created_at')->get();
+        $comentarios = Comentario::where('publication_id', $id)->with('created_by')->orderBy('created_at')->get();
 
         if ($comentarios->isEmpty()) return response()->json([], 404);
 

@@ -24,9 +24,7 @@ class Comentario extends Model
 
     public function created_by()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'created_by')
+                    ->select(["id", "username", "first_name", "last_name", "picture"]);
     }
-
-
-
 }
