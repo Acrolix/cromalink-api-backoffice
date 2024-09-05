@@ -19,19 +19,12 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'email',
-        'first_name',
-        'last_name',
         'username',
-        'date_of_birth',
-        'biography',
-        'phone',
-        'country',
-        'picture',
         'last_login',
         'password',
-        'staff',
         'active',
         'created_at',
+        'updated_at',
     ];
 
     /**
@@ -40,9 +33,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-
+        'id',
         'password',
-        'phone',
         'remember_token',
 
     ];
@@ -59,7 +51,7 @@ class User extends Authenticatable
     public function publicaciones()
     {
         return $this->hasMany(Publicacion::class, 'created_by');
-    }   
+    }
 
     public function reactions()
     {
