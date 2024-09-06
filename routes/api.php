@@ -1,9 +1,18 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\PublicacionController;
 use App\Http\Controllers\ReaccionController;
 use Illuminate\Support\Facades\Route;
+
+Route::group(['prefix' => 'auth'], function () {
+    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+    Route::post('register', [AuthController::class, 'register'])->name('auth.register');
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('auth')->name('auth.logout');
+    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('auth')->name('auth.refresh');
+    Route::get('me', [AuthController::class, 'me'])->middleware('auth')->name('auth.me');
+});
 
 Route::group(['prefix' => 'publicaciones'], function () {
     Route::get('/', [PublicacionController::class, 'filtrar'])->name('publicaciones.filtrar');
