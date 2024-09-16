@@ -2,39 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    }
-
     /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(Request $request)
     {
-        $credentials = request(['email', 'password']);
+        $validatedData = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:8',
+            'remember_me' => 'boolean',
+        ]);
 
-        if (! $token = auth()->attempt($credentials)) {
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors(), 400);
+        }
+
+        $credentials = $request->only('email', 'password');
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        //'expires_in' => auth()->factory()->getTTL() * 60
-        'expires_in' => auth('api')->factory()->getTTL() * 600
-    ]);
+        if ($request->remember_me) auth()->factory()->setTTL(20160);
+
+        return $this->respondWithToken($token);
+    }
+
+    /**
+     * Register a User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function register(Request $request)
+    {
+        $validatedData = Validator::make($request->all(), [
+            'email' => 'required|email|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validatedData->fails()) {
+            return response()->json($validatedData->errors(), 400);
+        }
+
+        $user = User::create([
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        $user->sendEmailVerificationNotification();
+
+        return response()->json([], 201);
     }
 
     /**
@@ -67,6 +92,37 @@ class AuthController extends Controller
     public function refresh()
     {
         return $this->respondWithToken(auth()->refresh());
+    }
+
+    /**
+     * Verify the user email.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function verifyEmail(EmailVerificationRequest $request)
+    {
+        try {
+            $request->fulfill();
+
+            return response()->json([], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => 'Link de verificación inválido'], 400);
+        }
+
+    }
+
+    /**
+     * Resend the email verification notification.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function resendEmailVerification(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        if ($user) $user->sendEmailVerificationNotification();
+
+        return response()->json([], 200);
     }
 
     /**

@@ -6,6 +6,11 @@ use App\Http\Controllers\PublicacionController;
 use App\Http\Controllers\ReaccionController;
 use Illuminate\Support\Facades\Route;
 
+Route::group(['prefix' => 'email'], function () {
+    Route::get('verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
+    Route::post('resend', [AuthController::class, 'resendEmailVerification'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+});
+
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login'])->name('auth.login');
     Route::post('register', [AuthController::class, 'register'])->name('auth.register');
