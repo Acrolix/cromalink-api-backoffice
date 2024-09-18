@@ -17,8 +17,13 @@ class DatabaseSeeder extends Seeder
         if (User::count() === 0) {
             $this->call(UserSeeder::class);
         }
-        $this->call(PublicacionSeeder::class);
-        $this->call(ComentarioSeeder::class);
-        $this->call(ReaccionSeeder::class);
+        $this->call(FollowsSeeder::class);
+        $this->call(CountrySeeder::class);
+        $this->call(PublicationSeeder::class);
+        $this->call(CommentSeeder::class);
+        $this->call(ReactionSeeder::class);
+        $this->call(ResourceSeeder::class);
+        $this->call(SocialEventSeeder::class);
+
     }
 }
