@@ -13,26 +13,13 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'email',
-        'username',
         'last_login',
         'password',
         'active',
-        'created_at',
-        'updated_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'id',
         'password',
@@ -40,11 +27,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -54,11 +36,6 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->getKey();
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
     public function getJWTCustomClaims()
     {
         return [];
@@ -66,11 +43,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function publicaciones()
     {
-        return $this->hasMany(Publicacion::class, 'created_by');
+        return $this->hasMany(Publication::class, 'published_by');
     }
 
     public function reactions()
     {
-        return $this->hasMany(Reaccion::class, 'reaction_by');
+        return $this->hasMany(Reaction::class, 'reaction_by');
     }
 }

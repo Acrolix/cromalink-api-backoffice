@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Reaccion extends Model
+class Reaction extends Model
 {
     use HasFactory;
 
@@ -15,11 +15,12 @@ class Reaccion extends Model
     protected $fillable = [
         'publication_id',
         'reaction_by',
+        'type',
     ];
 
     public function publication()
     {
-        return $this->belongsTo(Publicacion::class, 'publication_id');
+        return $this->belongsTo(Publication::class, 'publication_id');
     }
 
     public function user()

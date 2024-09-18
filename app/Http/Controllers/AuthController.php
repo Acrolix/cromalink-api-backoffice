@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -22,16 +23,15 @@ class AuthController extends Controller
             'remember_me' => 'boolean',
         ]);
 
-        if ($validatedData->fails()) {
-            return response()->json($validatedData->errors(), 400);
-        }
+        if ($validatedData->fails()) return response()->json($validatedData->errors(), 400);
 
         $credentials = $request->only('email', 'password');
-        if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        }
+        if (!$token = Auth::attempt($credentials)) return response()->json(['error' => 'Unauthorized'], 401);
 
-        if ($request->remember_me) auth()->factory()->setTTL(20160);
+        if ($request->remember_me) Auth::factory()->setTTL(20160);
+
+        Auth::user()->last_login = now();
+        Auth::user()->save();
 
         return $this->respondWithToken($token);
     }
@@ -69,7 +69,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json(Auth::user());
     }
 
     /**
@@ -79,9 +79,9 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
+        Auth::logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json([], 200);
     }
 
     /**
@@ -91,7 +91,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->respondWithToken(Auth::refresh());
     }
 
     /**
@@ -102,13 +102,17 @@ class AuthController extends Controller
     public function verifyEmail(EmailVerificationRequest $request)
     {
         try {
+            if ($request->user()->hasVerifiedEmail()) return response()->json(['message' => 'Email ya verificado'], 400);
             $request->fulfill();
+
+            $user = $request->user();
+            $user->active = true;
+            $user->save();
 
             return response()->json([], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' => 'Link de verificación inválido'], 400);
         }
-
     }
 
     /**
@@ -118,7 +122,11 @@ class AuthController extends Controller
      */
     public function resendEmailVerification(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        $user = $request->user();
+
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email ya verificado'], 400);
+        }
 
         if ($user) $user->sendEmailVerificationNotification();
 
@@ -137,7 +145,7 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => Auth::factory()->getTTL() * 60
         ]);
     }
 }

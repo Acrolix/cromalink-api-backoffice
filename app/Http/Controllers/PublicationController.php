@@ -2,21 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Publicacion;
+use App\Models\Publication;
 use Illuminate\Http\Request;
 
-class PublicacionController extends Controller
+class PublicationController extends Controller
 {
     public function filtrar(Request $request)
     {
         $where = [];
-        if ($request->has('titulo')) $where[] = ["title", "like", "%" . $request->titulo . "%"];
-        if ($request->has('contenido')) $where[] = ["content", "like", "%" . $request->contenido . "%"];
-        if ($request->has('usuario')) $where[] = ["created_by", "=", $request->usuario];
+        if ($request->has('title')) $where[] = ["title", "like", "%" . $request->title . "%"];
+        if ($request->has('content')) $where[] = ["content", "like", "%" . $request->content . "%"];
+        if ($request->has('user_id')) $where[] = ["published_by", "=", $request->user_id];
 
         $publicaciones = [];
         try {
-            $publicaciones = Publicacion::with(["created_by", "comments", "reactions"])->where($where)->paginate(20);
+            $publicaciones = Publication::with(["published_by"])->where($where)->paginate(20);
         } catch (\Exception $e) {
             return response()->json(["errors" => $e->getMessage()], 500);
         }
@@ -29,11 +29,11 @@ class PublicacionController extends Controller
     public function guardar(Request $request)
     {
         try {
-            $publicacion = Publicacion::create([
+            $publicacion = Publication::create([
                 'title' => $request->title,
                 'content' => $request->content,
                 'image' => $request->image,
-                'created_by' => $request->created_by,
+                'published_by' => $request->user_id || $request->user()->id,
             ]);
         } catch (\Exception $e) {
             return response()->json(["errors" => $e->getMessage()], 500);
@@ -45,7 +45,7 @@ class PublicacionController extends Controller
     public function obtener($id)
     {
 
-        $publicacion = Publicacion::with(["created_by", "comments"])->withCount('reactions')->find($id);
+        $publicacion = Publication::with(["published_by", "comments"])->withCount('reactions')->find($id);
         if ($publicacion) {
             return response()->json($publicacion, 200);
         }
@@ -54,7 +54,7 @@ class PublicacionController extends Controller
 
     public function actualizar(Request $request, $id)
     {
-        $publicacion = Publicacion::find($id);
+        $publicacion = Publication::find($id);
         if (!$publicacion) return response()->json([], 404);
 
         $publicacion->update([
@@ -68,7 +68,7 @@ class PublicacionController extends Controller
 
     public function eliminar($id)
     {
-        $publicacion = Publicacion::find($id);
+        $publicacion = Publication::find($id);
         if ($publicacion) {
             $publicacion->delete();
             return response(null, 204);
