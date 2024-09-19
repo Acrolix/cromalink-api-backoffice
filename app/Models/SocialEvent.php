@@ -29,7 +29,7 @@ class SocialEvent extends Model
     use HasFactory;
 
     protected $table = 'social_events';
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'name',

@@ -10,7 +10,7 @@ class Publication extends Model
     use HasFactory;
 
     protected $table = 'publications';
-    protected $timestamps = true;
+    public $timestamps = true;
 
     protected $fillable = [
         'id',
@@ -26,7 +26,7 @@ class Publication extends Model
 
     public function published_by()
     {
-        return $this->belongsTo(UserProfile::class, 'published_by');
+        return $this->belongsTo(User::class, 'published_by')->with('user_profile');
     }
 
     public function comments()

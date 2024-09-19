@@ -13,13 +13,14 @@ class UserFactory extends Factory
      */
     public function definition()
     {
+
         $last_login = $this->faker->dateTimeThisYear();
         return [
             'email' => $this->faker->unique()->safeEmail,
             'last_login' => $this->faker->dateTimeThisYear(),
             'password' => bcrypt($this->faker->password()),
             'active' => true,
-            'email_verified_at' => $this->faker->dateTimeBetween($last_login, '-5 years'),
+            'email_verified_at' => $this->faker->dateTimeBetween('-5 years', $last_login),
         ];
     }
 

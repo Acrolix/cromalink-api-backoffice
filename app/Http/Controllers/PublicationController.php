@@ -7,72 +7,42 @@ use Illuminate\Http\Request;
 
 class PublicationController extends Controller
 {
-    public function filtrar(Request $request)
+    public function index(Request $request)
     {
         $where = [];
         if ($request->has('title')) $where[] = ["title", "like", "%" . $request->title . "%"];
         if ($request->has('content')) $where[] = ["content", "like", "%" . $request->content . "%"];
         if ($request->has('user_id')) $where[] = ["published_by", "=", $request->user_id];
 
-        $publicaciones = [];
+        $posts = [];
         try {
-            $publicaciones = Publication::with(["published_by"])->where($where)->paginate(20);
+            $posts = Publication::with(["published_by"])->where($where)->paginate(20);
         } catch (\Exception $e) {
             return response()->json(["errors" => $e->getMessage()], 500);
         }
 
-        if ($publicaciones->isEmpty()) return response()->json($publicaciones, 404);
+        if ($posts->isEmpty()) return response()->json($posts, 404);
 
-        return response()->json($publicaciones, 200);
+        return response()->json($posts, 200);
     }
 
-    public function guardar(Request $request)
+    public function store(Request $request)
     {
-        try {
-            $publicacion = Publication::create([
-                'title' => $request->title,
-                'content' => $request->content,
-                'image' => $request->image,
-                'published_by' => $request->user_id || $request->user()->id,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(["errors" => $e->getMessage()], 500);
-        }
-
-        return response()->json($publicacion, 201);
+        //
     }
 
-    public function obtener($id)
+    public function show($id)
     {
-
-        $publicacion = Publication::with(["published_by", "comments"])->withCount('reactions')->find($id);
-        if ($publicacion) {
-            return response()->json($publicacion, 200);
-        }
-        return response()->json([], 404);
+        //
     }
 
-    public function actualizar(Request $request, $id)
+    public function update(Request $request, $id)
     {
-        $publicacion = Publication::find($id);
-        if (!$publicacion) return response()->json([], 404);
-
-        $publicacion->update([
-            'title' => $request->title,
-            'content' => $request->content,
-
-        ]);
-
-        return response()->json($publicacion, 200);
+        //
     }
 
-    public function eliminar($id)
+    public function destroy($id)
     {
-        $publicacion = Publication::find($id);
-        if ($publicacion) {
-            $publicacion->delete();
-            return response(null, 204);
-        }
-        return response(null, 404);
+        //
     }
 }

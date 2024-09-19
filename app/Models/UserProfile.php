@@ -29,7 +29,7 @@ class UserProfile extends Model
 
     use HasFactory;
 
-    protected $table = 'user_profiles';
+    protected $table = 'user_profile';
     public $timestamps = false;
 
     protected $fillable = [

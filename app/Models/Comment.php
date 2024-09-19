@@ -10,7 +10,7 @@ class Comment extends Model
     use HasFactory;
 
     protected $table = 'users_comment';
-    protected $timestamps = true;
+    public $timestamps = true;
 
     protected $fillable = [
         'publication_id',

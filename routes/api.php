@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\ReaccionController;
 use Illuminate\Support\Facades\Route;
@@ -20,11 +20,11 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'publications'], function () {
-    Route::get('/', [PublicationController::class, 'filtrar'])->middleware(['auth', 'verified'])->name('publicaciones.filtrar');
-    Route::post('/', [PublicationController::class, 'guardar'])->middleware(['auth', 'verified'])->name('publicaciones.guardar');
-    Route::get('/{id}', [PublicationController::class, 'obtener'])->middleware(['auth', 'verified'])->name('publicaciones.obtener');
-    Route::put('/{id}', [PublicationController::class, 'actualizar'])->middleware(['auth', 'verified'])->name('publicaciones.actualizar');
-    Route::delete('/{id}', [PublicationController::class, 'eliminar'])->middleware(['auth', 'verified'])->name('publicaciones.eliminar');
+    Route::get('/', [PublicationController::class, 'index'])->middleware(['auth', 'verified'])->name('publication.index');
+    Route::post('/', [PublicationController::class, 'store'])->middleware(['auth', 'verified'])->name('publication.store');
+    Route::get('/{id}', [PublicationController::class, 'show'])->middleware(['auth', 'verified'])->name('publication.show');
+    Route::put('/{id}', [PublicationController::class, 'update'])->middleware(['auth', 'verified'])->name('publication.update');
+    Route::delete('/{id}', [PublicationController::class, 'destroy'])->middleware(['auth', 'verified'])->name('publication.destroy');
 });
 
 Route::group(['prefix' => 'reacciones'], function () {
@@ -33,8 +33,8 @@ Route::group(['prefix' => 'reacciones'], function () {
 });
 
 Route::group(['prefix' => 'comments'], function () {
-    Route::get('/{id}', [ComentarioController::class, 'listar'])->name('comentarios.listar');
-    Route::post('/', [ComentarioController::class, 'guardar'])->name('comentarios.guardar');
-    Route::put('/{id}', [ComentarioController::class, 'actualizar'])->name('comentarios.actualizar');
-    Route::delete('/{id}', [ComentarioController::class, 'eliminar'])->name('comentarios.eliminar');
+    Route::get('/{id}', [CommentController::class, 'listar'])->name('comentarios.listar');
+    Route::post('/', [CommentController::class, 'guardar'])->name('comentarios.guardar');
+    Route::put('/{id}', [CommentController::class, 'actualizar'])->name('comentarios.actualizar');
+    Route::delete('/{id}', [CommentController::class, 'eliminar'])->name('comentarios.eliminar');
 });

@@ -25,7 +25,7 @@ class Resource extends Model
     use HasFactory;
 
     protected $table = 'resources';
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'id',

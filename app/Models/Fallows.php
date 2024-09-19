@@ -10,7 +10,7 @@ class Fallows extends Model
     use HasFactory;
 
     protected $table = 'users_followers';
-    protected $timestamps = false;
+    public $timestamps = false;
 
     protected $fillable = [
         'follower_id',
