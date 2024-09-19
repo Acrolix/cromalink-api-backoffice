@@ -26,7 +26,7 @@ class Publication extends Model
 
     public function published_by()
     {
-        return $this->belongsTo(User::class, 'published_by');
+        return $this->belongsTo(UserProfile::class, 'published_by');
     }
 
     public function comments()

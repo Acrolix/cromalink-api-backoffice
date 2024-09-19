@@ -9,8 +9,8 @@ class Fallows extends Model
 {
     use HasFactory;
 
-    public $table = 'users_followers';
-    public $timestamps = false;
+    protected $table = 'users_followers';
+    protected $timestamps = false;
 
     protected $fillable = [
         'follower_id',
@@ -19,12 +19,12 @@ class Fallows extends Model
 
     public function follower()
     {
-        return $this->belongsTo(User::class, 'follower_id');
+        return $this->belongsTo(UserProfile::class, 'follower_id');
     }
 
     public function followed()
     {
-        return $this->belongsTo(User::class, 'followed_id');
+        return $this->belongsTo(UserProfile::class, 'followed_id');
     }
 
 }

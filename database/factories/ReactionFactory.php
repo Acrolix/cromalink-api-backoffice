@@ -18,6 +18,7 @@ class ReactionFactory extends Factory
         return [
             'publication_id' => Publication::all()->random()->id,
             'reaction_by' => User::all()->random()->id,
+            'type' => $this->faker->randomElement(['MG', 'ME', 'MD']),
         ];
     }
 }

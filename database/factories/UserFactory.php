@@ -13,35 +13,15 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-           return [
-                'email' => $this->faker->unique()->safeEmail,
-                'first_name' => $this->faker->firstName,
-                'last_name' => $this->faker->lastName,
-                'username' => $this->faker->userName,
-                'date_of_birth' => $this->faker->date(),
-                'biography' => $this->faker->text(),
-                'phone' => $this->faker->phoneNumber,
-                'country' => $this->faker->country,
-                'picture' => $this->faker->imageUrl(),
-                'last_login' => $this->faker->dateTime(),
-                'password' => bcrypt('password'),
-                'staff' => $this->faker->boolean(),
-                'active' => $this->faker->boolean(),
-                'created_at' => $this->faker->dateTime(),
-            ];
+        $last_login = $this->faker->dateTimeThisYear();
+        return [
+            'email' => $this->faker->unique()->safeEmail,
+            'last_login' => $this->faker->dateTimeThisYear(),
+            'password' => bcrypt($this->faker->password()),
+            'active' => true,
+            'email_verified_at' => $this->faker->dateTimeBetween($last_login, '-5 years'),
+        ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    public function unverified()
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'email_verified_at' => null,
-            ];
-        });
-    }
+
 }

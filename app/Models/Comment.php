@@ -10,7 +10,7 @@ class Comment extends Model
     use HasFactory;
 
     protected $table = 'users_comment';
-    public $timestamps = true;
+    protected $timestamps = true;
 
     protected $fillable = [
         'publication_id',
@@ -30,8 +30,6 @@ class Comment extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'published_by')
-                    ->select(["id", "username", "first_name", "last_name", "picture"]);
+        return $this->belongsTo(UserProfile::class, 'published_by');
     }
-
 }

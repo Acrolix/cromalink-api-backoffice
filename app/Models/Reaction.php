@@ -25,6 +25,6 @@ class Reaction extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'reaction_by');
+        return $this->belongsTo(UserProfile::class, 'reaction_by');
     }
 }

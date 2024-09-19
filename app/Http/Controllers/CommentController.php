@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comentario;
+use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class ComentarioController extends Controller
+class CommentController extends Controller
 {
 
     public function listar($id)
     {
-        $comentarios = Comentario::where('publication_id', $id)->with('created_by')->orderBy('created_at')->get();
+        $comentarios = Comment::where('publication_id', $id)->with('created_by')->orderBy('created_at')->get();
 
         if ($comentarios->isEmpty()) return response()->json([], 404);
 
@@ -20,9 +21,9 @@ class ComentarioController extends Controller
     public function guardar(Request $request)
     {
         try {
-            $comentario = Comentario::create([
+            $comentario = Comment::create([
                 'publication_id' => $request->publication_id,
-                'created_by' => $request->created_by,
+                'published_by' => $request->published_by ?? Auth::user()->id,
                 'content' => $request->content,
             ]);
         } catch (\Exception $e) {
@@ -34,7 +35,7 @@ class ComentarioController extends Controller
 
     public function actualizar(Request $request, $id)
     {
-        $comentario = Comentario::find($id);
+        $comentario = Comment::find($id);
         if (!$comentario) return response()->json([], 404);
 
         $comentario->update([
@@ -46,7 +47,7 @@ class ComentarioController extends Controller
 
     public function eliminar($id)
     {
-        $comentario = Comentario::find($id);
+        $comentario = Comment::find($id);
         if (!$comentario) return response(404);
 
         $comentario->delete();
