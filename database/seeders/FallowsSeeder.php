@@ -15,9 +15,9 @@ class FallowsSeeder extends Seeder
     public function run()
     {
         try {
-            Fallows::factory(1000)->create();
+            Fallows::factory(500)->create();
         } catch (\Throwable $th) {
-            throw $th;
+            $this->command->info($th->getMessage());
         }
     }
 }

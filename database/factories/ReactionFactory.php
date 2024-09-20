@@ -15,10 +15,19 @@ class ReactionFactory extends Factory
      */
     public function definition()
     {
+        $publication = Publication::all()->random();
+        $reaction_by = UserProfile::all()->random();
+        $type = $this->faker->randomElement(['MG', 'ME', 'MD']);
+
+        while ($publication->reactions()->where('reaction_by', $reaction_by->user_id)->exists()) {
+            $publication = Publication::all()->random();
+            $reaction_by = UserProfile::all()->random();
+        }
+
         return [
-            'publication_id' => Publication::all()->random()->id,
-            'reaction_by' => UserProfile::all()->random()->user_id,
-            'type' => $this->faker->randomElement(['MG', 'ME', 'MD']),
+            'publication_id' => $publication->id,
+            'reaction_by' => $reaction_by->user_id,
+            'type' => $type,
         ];
     }
 }

@@ -45,8 +45,8 @@ class ResourceFactory extends Factory
 
         do {
             $publication = Publication::all()->random();
-            $resources = $publication->resources->count();
-        } while ($resources >= 4);
+            $resources = $publication->resources()->count();
+        } while ($resources >= 5);
 
         $types = $this->faker->randomElement(['image', 'video', 'audio', 'external']);
 

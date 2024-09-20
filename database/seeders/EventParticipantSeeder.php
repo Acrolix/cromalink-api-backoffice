@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Publication;
+use App\Models\EventParticipant;
 use Illuminate\Database\Seeder;
 
-class PublicationSeeder extends Seeder
+class EventParticipantSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,9 @@ class PublicationSeeder extends Seeder
     public function run()
     {
         try {
-            Publication::factory(500)->create();
+            EventParticipant::factory(1000)->create();
         } catch (\Exception $e) {
-            $this->command->info($e->getMessage());
+            $this->command->info('EventParticipantSeeder already has data!');
         }
     }
 }

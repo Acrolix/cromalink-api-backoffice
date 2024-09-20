@@ -59,7 +59,7 @@ class UserProfile extends Model
 
     public function social_events()
     {
-        return $this->hasMany(SocialEvent::class, 'publication_id');
+        return $this->hasMany(SocialEvent::class, 'publication_id')->with('participants');
     }
 
     public function publications()

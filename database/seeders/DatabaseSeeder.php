@@ -17,9 +17,10 @@ class DatabaseSeeder extends Seeder
         if (UserProfile::count() === 0) $this->call(UserProfileSeeder::class);
         $this->call(PublicationSeeder::class);
         $this->call(CommentSeeder::class);
+        $this->call(FallowsSeeder::class);
         $this->call(ReactionSeeder::class);
         $this->call(ResourceSeeder::class);
-
-
+        $this->call(SocialEventSeeder::class);
+        $this->call(EventParticipantSeeder::class);
     }
 }

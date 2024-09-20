@@ -14,6 +14,10 @@ class CommentSeeder extends Seeder
      */
     public function run()
     {
-        Comment::factory(500)->create();
+        try {
+            Comment::factory(500)->create();
+        } catch (\Exception $e) {
+            $this->command->info($e->getMessage());
+        }
     }
 }

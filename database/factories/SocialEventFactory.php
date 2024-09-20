@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Country;
 use App\Models\Publication;
+use DateInterval;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SocialEventFactory extends Factory
@@ -14,14 +16,20 @@ class SocialEventFactory extends Factory
      */
     public function definition()
     {
+        $start_at = $this->faker->dateTimeBetween(now(), '+1 month');
+        $publication = Publication::all()->random();
+
+        while ($publication->social_events()->exists()) {
+            $publication = Publication::all()->random();
+        }
 
         return [
             'name' => $this->faker->sentence(3),
-            'publication_id' => Publication::all()->random()->id,
-            'starts_at' => $$this->faker->dateTimeBetween('-1 month', '+1 month'),
-            'ends_at' => $this->faker->dateTimeBetween('+1 month', '+2 month'),
+            'publication_id' => $publication->id,
+            'starts_at' => $start_at,
+            'ends_at' => (clone $start_at)->modify('+' . rand(1, 3) . ' hours'),
             'description' => $this->faker->text(rand(50, 200)),
-            'country_code' => $this->faker->countryCode(),
+            'country_code' => Country::all()->random()->code,
             'longitude' => $this->faker->longitude(),
             'latitude' => $this->faker->latitude(),
         ];

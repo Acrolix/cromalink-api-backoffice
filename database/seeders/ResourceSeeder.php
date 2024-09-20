@@ -14,7 +14,6 @@ class ResourceSeeder extends Seeder
      */
     public function run()
     {
-
-        Resource::factory(500)->create();
+        Resource::factory(200)->create();
     }
 }

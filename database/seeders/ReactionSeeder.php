@@ -16,8 +16,8 @@ class ReactionSeeder extends Seeder
     {
         try {
             Reaction::factory(1000)->create();
-        } catch (\Throwable $th) {
-
+        } catch (\Exception $e) {
+            $this->command->info($e->getMessage());
         }
     }
 }

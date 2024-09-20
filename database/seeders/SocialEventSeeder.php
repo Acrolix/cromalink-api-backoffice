@@ -16,8 +16,8 @@ class SocialEventSeeder extends Seeder
     {
         try {
             SocialEvent::factory(50)->create();
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Exception $e) {
+            $this->command->info($e->getMessage());
         }
     }
 }

@@ -34,6 +34,12 @@ class Publication extends Model
         return $this->hasMany(Comment::class, 'publication_id');
     }
 
+
+    public function social_events()
+    {
+        return $this->hasMany(SocialEvent::class, 'publication_id');
+    }
+
     public function resources()
     {
         return $this->hasMany(Resource::class, 'publication_id');
