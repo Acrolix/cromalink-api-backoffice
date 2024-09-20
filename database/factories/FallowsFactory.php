@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class FallowsFactory extends Factory
@@ -14,9 +14,19 @@ class FallowsFactory extends Factory
      */
     public function definition()
     {
+        $follower = UserProfile::all()->random();
+        $followed = UserProfile::all()->random();
+
+        $repeat = UserProfile::where('id', $follower->id)->where('id', $followed->id)->count() > 0;
+
+        while ($follower->id === $followed->id && !$repeat) {
+            $followed = UserProfile::all()->random();
+        }
+
+
         return [
-            'follower_id' => User::all()->random()->id,
-            'followed_id' => User::all()->random()->id,
+            'follower_id' => $follower->id,
+            'followed_id' => $followed->id,
         ];
     }
 }

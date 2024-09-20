@@ -14,13 +14,12 @@ class SocialEventFactory extends Factory
      */
     public function definition()
     {
-        $starts_at = $this->faker->dateTimeBetween('now', '+1 year');
-        $ends_at = $this->faker->dateTimeBetween($starts_at, '+3 hours');
+
         return [
             'name' => $this->faker->sentence(3),
             'publication_id' => Publication::all()->random()->id,
-            'starts_at' => $starts_at,
-            'ends_at' => $ends_at,
+            'starts_at' => $$this->faker->dateTimeBetween('-1 month', '+1 month'),
+            'ends_at' => $this->faker->dateTimeBetween('+1 month', '+2 month'),
             'description' => $this->faker->text(rand(50, 200)),
             'country_code' => $this->faker->countryCode(),
             'longitude' => $this->faker->longitude(),

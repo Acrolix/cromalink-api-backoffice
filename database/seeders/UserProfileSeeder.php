@@ -15,7 +15,7 @@ class UserProfileSeeder extends Seeder
     public function run()
     {
         UserProfile::factory()
-            ->count(50)
+            ->count(100)
             ->create();
     }
 }

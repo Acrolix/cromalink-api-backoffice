@@ -3,10 +3,10 @@
 namespace Database\Factories;
 
 use App\Models\Publication;
-use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ComentarioFactory extends Factory
+class CommentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class ComentarioFactory extends Factory
     {
         return [
             'publication_id' => Publication::all()->random()->id,
-            'created_by' => User::all()->random()->id,
+            'published_by' => UserProfile::all()->random()->user_id,
             'content' => $this->faker->text(rand(50, 200)),
         ];
     }

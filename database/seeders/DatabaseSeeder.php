@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\UserProfile;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,16 +14,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        if (User::count() === 0) {
-            $this->call(UserSeeder::class);
-        }
-        $this->call(FollowsSeeder::class);
-        $this->call(CountrySeeder::class);
+        if (UserProfile::count() === 0) $this->call(UserProfileSeeder::class);
         $this->call(PublicationSeeder::class);
         $this->call(CommentSeeder::class);
         $this->call(ReactionSeeder::class);
         $this->call(ResourceSeeder::class);
-        $this->call(SocialEventSeeder::class);
+
 
     }
 }

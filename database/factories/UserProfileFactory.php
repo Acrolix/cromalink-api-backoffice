@@ -15,10 +15,9 @@ class UserProfileFactory extends Factory
      */
     public function definition()
     {
-        $user = User::factory()->create();
         return [
-            'user_id' => $user->id,
-            'username' => $this->faker->userName(),
+            'user_id' => User::factory()->create()->id,
+            'username' => $this->faker->unique()->userName(),
             'first_name' => $this->faker->firstName(),
             'last_name' => $this->faker->lastName(),
             'biography' => $this->faker->text(),

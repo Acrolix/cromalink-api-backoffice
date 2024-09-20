@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Reaccion;
+use App\Models\Reaction;
 use Illuminate\Database\Seeder;
 
-class ReaccionSeeder extends Seeder
+class ReactionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,9 +15,9 @@ class ReaccionSeeder extends Seeder
     public function run()
     {
         try {
-            Reaccion::factory(1000)->create();
+            Reaction::factory(1000)->create();
         } catch (\Throwable $th) {
-            
+
         }
     }
 }

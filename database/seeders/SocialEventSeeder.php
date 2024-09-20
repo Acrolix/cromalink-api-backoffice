@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\SocialEvent;
 use Illuminate\Database\Seeder;
 
 class SocialEventSeeder extends Seeder
@@ -13,6 +14,10 @@ class SocialEventSeeder extends Seeder
      */
     public function run()
     {
-        //
+        try {
+            SocialEvent::factory(50)->create();
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 }

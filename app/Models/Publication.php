@@ -26,12 +26,17 @@ class Publication extends Model
 
     public function published_by()
     {
-        return $this->belongsTo(User::class, 'published_by')->with('user_profile');
+        return $this->belongsTo(UserProfile::class, 'published_by');
     }
 
     public function comments()
     {
         return $this->hasMany(Comment::class, 'publication_id');
+    }
+
+    public function resources()
+    {
+        return $this->hasMany(Resource::class, 'publication_id');
     }
 
     public function reactions()

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Resource;
 use Illuminate\Database\Seeder;
 
 class ResourceSeeder extends Seeder
@@ -13,6 +14,7 @@ class ResourceSeeder extends Seeder
      */
     public function run()
     {
-        //
+
+        Resource::factory(500)->create();
     }
 }
