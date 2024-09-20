@@ -17,6 +17,7 @@ class Publication extends Model
         'title',
         'content',
         'published_by',
+        'resources',
     ];
 
     protected $casts = [
@@ -24,43 +25,29 @@ class Publication extends Model
         'updated_at' => 'datetime',
     ];
 
+    protected $hidden = [];
+
     public function published_by()
     {
-        return $this->belongsTo(UserProfile::class, 'published_by');
+        return $this->belongsTo(UserProfile::class, 'published_by', 'user_id');
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'publication_id');
+        return $this->hasMany(Comment::class, 'publication_id')->with('user');
     }
-
 
     public function social_events()
     {
-        return $this->hasMany(SocialEvent::class, 'publication_id');
-    }
-
-    public function resources()
-    {
-        return $this->hasMany(Resource::class, 'publication_id');
+        return $this->hasMany(SocialEvent::class, 'publication_id')->with('country');
     }
 
     public function reactions()
     {
         return $this->hasMany(Reaction::class, 'publication_id');
     }
-
-    public function reactions_count()
+    public function resources()
     {
-        return $this->hasMany(Reaction::class, 'publication_id')
-                    ->selectRaw('publication_id, count(*) as count')
-                    ->groupBy('publication_id');
-    }
-
-    public function comments_count()
-    {
-        return $this->hasMany(Comment::class, 'publication_id')
-                    ->selectRaw('publication_id, count(*) as count')
-                    ->groupBy('publication_id');
+        return $this->hasMany(Resource::class, 'publication_id');
     }
 }

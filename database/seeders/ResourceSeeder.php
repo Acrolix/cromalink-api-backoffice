@@ -14,6 +14,10 @@ class ResourceSeeder extends Seeder
      */
     public function run()
     {
-        Resource::factory(200)->create();
+        try {
+            Resource::factory(200)->create();
+        } catch (\Exception $e) {
+            $this->command->info($e->getMessage());
+        }
     }
 }

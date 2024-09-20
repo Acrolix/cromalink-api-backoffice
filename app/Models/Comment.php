@@ -30,6 +30,6 @@ class Comment extends Model
 
     public function user()
     {
-        return $this->belongsTo(UserProfile::class, 'published_by');
+        return $this->belongsTo(UserProfile::class, 'published_by', 'user_id');
     }
 }

@@ -47,6 +47,28 @@ class UserProfile extends Model
         'birth_date' => 'datetime',
     ];
 
+    protected $hidden = ['biography', 'birth_date', 'avatar'];
+
+    public function getFullName()
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function getAvatar()
+    {
+        return $this->avatar ? $this->avatar : "https://www.gravatar.com/avatar/" . md5(strtolower(trim($this->email))) . "?s=200&d=identicon";
+    }
+
+    function getBiography()
+    {
+        return $this->biography ? $this->biography : "Sin biografía";
+    }
+
+    function getBirthDate()
+    {
+        return $this->birth_date;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -54,7 +76,7 @@ class UserProfile extends Model
 
     public function country()
     {
-        return $this->belongsTo(Country::class, 'country_code');
+        return $this->belongsTo(Country::class, 'country_code', 'code');
     }
 
     public function social_events()
@@ -64,17 +86,17 @@ class UserProfile extends Model
 
     public function publications()
     {
-        return $this->hasMany(Publication::class, 'published_by');
+        return $this->hasMany(Publication::class, 'published_by' , 'user_id');
     }
 
     public function reactions()
     {
-        return $this->hasMany(Reaction::class, 'reaction_by');
+        return $this->hasMany(Reaction::class, 'reaction_by' , 'reaction_by');
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'comment_by');
+        return $this->hasMany(Comment::class, 'comment_by', 'published_by');
     }
 
     public function resources()
