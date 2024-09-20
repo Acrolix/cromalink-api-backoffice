@@ -5,6 +5,13 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\ReaccionController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Passport\Passport;
+
+Passport::routes();
+
+Route::get('/emailVerifySuccess', function () {
+    return redirect()->to('/');
+})->name('emailVerifySuccess');
 
 Route::group(['prefix' => 'email'], function () {
     Route::get('verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->middleware(['auth', 'signed'])->name('verification.verify');
@@ -12,11 +19,10 @@ Route::group(['prefix' => 'email'], function () {
 });
 
 Route::group(['prefix' => 'auth'], function () {
-    Route::post('login', [AuthController::class, 'login'])->name('auth.login');
     Route::post('register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth')->name('auth.logout');
     Route::post('refresh', [AuthController::class, 'refresh'])->middleware('auth')->name('auth.refresh');
-    Route::get('me', [AuthController::class, 'me'])->middleware('auth')->name('auth.me');
+    Route::get('validate', [AuthController::class, 'validateToken'])->middleware('auth')->name('auth.validate');
 });
 
 Route::group(['prefix' => 'publications'], function () {
