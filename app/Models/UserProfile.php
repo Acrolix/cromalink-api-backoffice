@@ -7,26 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserProfile extends Model
 {
-
-//     Nombre de la Tabla:	user_profile
-// Entidad:	UserProfile
-// Objetivo:	Almacenar información adicional del perfil del usuario.
-
-
-// Metadatos:										Descripción del contenido
-// Nombre atributo	Tipo dato	Largo	PK	UK	Null	Valor default	Reglas (check)	Foreign Key
-
-// 								hacia tabla	hacia atributo
-// user_id	Numerico		X					users	id	Identificador del usuario.
-// username	Caracteres	20		X			^[a-zA-Z0-9_]+$			Nombre ficticio del usuario.
-// first_name	Caracteres	30								Primer Nombre real del usuario
-// last_name	Caracteres	30								Apellido del usuario.
-// biography	Texto				X					Biografía del usuario.
-// birth_date	Fecha						menor que la fecha actual menos 18 años			Fecha de nacimiento del usuario (debe ser mayor de 18 años).
-// country_code	Caracteres	4						country	code	País de residencia del usuario.
-// avatar	Caracteres	50			X					URL de la foto de perfil del usuario.
-
-
     use HasFactory;
 
     protected $table = 'user_profile';
@@ -47,7 +27,7 @@ class UserProfile extends Model
         'birth_date' => 'datetime',
     ];
 
-    protected $hidden = ['biography', 'birth_date', 'avatar'];
+    protected $hidden = ['biography', 'birth_date'];
 
     public function getFullName()
     {
@@ -59,19 +39,19 @@ class UserProfile extends Model
         return $this->avatar ? $this->avatar : "https://www.gravatar.com/avatar/" . md5(strtolower(trim($this->email))) . "?s=200&d=identicon";
     }
 
-    function getBiography()
+    public function getBiography()
     {
         return $this->biography ? $this->biography : "Sin biografía";
     }
 
-    function getBirthDate()
+    public function getBirthDate()
     {
         return $this->birth_date;
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function country()
@@ -86,17 +66,17 @@ class UserProfile extends Model
 
     public function publications()
     {
-        return $this->hasMany(Publication::class, 'published_by' , 'user_id');
+        return $this->hasMany(Publication::class, 'published_by', 'user_id');
     }
 
     public function reactions()
     {
-        return $this->hasMany(Reaction::class, 'reaction_by' , 'reaction_by');
+        return $this->hasMany(Reaction::class, 'reaction_by', 'user_id');
     }
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'comment_by', 'published_by');
+        return $this->hasMany(Comment::class, 'published_by', 'user_id');
     }
 
     public function resources()

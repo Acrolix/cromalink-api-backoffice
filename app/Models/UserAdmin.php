@@ -9,15 +9,6 @@ class UserAdmin extends Model
 {
     use HasFactory;
 
-    // CREATE TABLE user_admin (
-    //     user_id INT UNSIGNED PRIMARY KEY,
-    //     first_name VARCHAR(30) NOT NULL,
-    //     last_name VARCHAR(30) NOT NULL,
-    //     role VARCHAR(10) NOT NULL,
-    //     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    //     CONSTRAINT chk_admin_role CHECK (role IN ('Moderador', 'Admin'))
-    // );
-
     protected $table = 'user_admin';
     public $timestamps = false;
 

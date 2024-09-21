@@ -25,6 +25,6 @@ class EventParticipant extends Model
 
     public function participant()
     {
-        return $this->belongsTo(User::class, 'participant_id');
+        return $this->belongsTo(UserProfile::class, 'participant_id', 'user_id');
     }
 }

@@ -12,10 +12,10 @@ class PublicationController extends Controller
 {
     public function index(Request $request)
     {
-        $where = null;
+        $where = [];
         if ($request->has('title')) $where[] = ["title", "like", "%" . $request->title . "%"];
         if ($request->has('content')) $where[] = ["content", "like", "%" . $request->content . "%"];
-        if ($request->has('published_by')) $where[] = ["published_by", "=", $request->published_by];
+        if ($request->has('published_by')) $where[] = ["published_by", "=", $request->input('published_by')];
 
         $posts = null;
         try {
@@ -31,12 +31,13 @@ class PublicationController extends Controller
 
     public function store(Request $request)
     {
-        $published_by = UserProfile::find(auth()->user()->id)->user_id || $request->published_by;
+        $published_by = UserProfile::where('user_id', auth()->user()->id)->first();
+        $published_by = $published_by ? $published_by->user_id : $request->published_by;
         if (!$published_by) return response()->json([], 400);
 
         $validateData = Validator::make($request->all(), [
             'title' => 'string|required|max:60',
-            'content' => 'text|required',
+            'content' => 'string|required',
             'resources' => 'array',
         ]);
 
@@ -53,13 +54,15 @@ class PublicationController extends Controller
             return response()->json(["errors" => "Se ha producido un error al guardar la publicación"], 500);
         }
 
-        foreach ($request->resources as $resource) {
-            $data = $this->getResourceData($resource);
-            $publication->resources()->create([
-                'publication_id' => $publication->id,
-                'type' => $data['type'],
-                'url' => $data['url'],
-            ]);
+        if ($request->has('resources')) {
+            foreach ($request->resources as $resource) {
+                $data = $this->getResourceData($resource);
+                $publication->resources()->create([
+                    'publication_id' => $publication->id,
+                    'type' => $data['type'],
+                    'url' => $data['url'],
+                ]);
+            }
         }
 
         return response()->json($publication, 201);
@@ -67,70 +70,50 @@ class PublicationController extends Controller
 
     public function show($id)
     {
-        $publication = Publication::with(["published_by", "comments", "resources"])->find($id);
-        if ($publication) {
-            $publication['comments'] = $publication->comments() || [];
-            $publication['reactions'] = $publication->reactions() || [];
-            return response()->json($publication, 200);
-        }
+        if (!$id) return response()->json([], 400);
+        $publication = Publication::with(["published_by", "comments", "resources"])->find($id)->loadMissing(['comments', 'reactions']);
+        if ($publication) return response()->json($publication, 200);
         return response()->json([], 404);
     }
 
     public function update(Request $request, $id)
     {
-        $publication = Publication::find($id);
-        if (!$publication) return response()->json([], 404);
-
-        $published_by = UserProfile::find(auth()->user()->id)->user_id || $request->published_by;
-        if (!$published_by) return response()->json([], 400);
+        if (!$id) return response()->json([], 400);
 
         $validateData = Validator::make($request->all(), [
             'title' => 'string|required|max:60',
-            'content' => 'text|required',
-            'resources' => 'array',
+            'content' => 'string|required',
         ]);
+        if ($validateData->fails()) return response()->json(["errors" => $validateData->errors()], 400);
 
-        if ($validateData->fails()) {
-            return response()->json(["errors" => $validateData->errors()], 400);
+
+        $publication = Publication::find($id)->loadMissing(['comments', 'reactions']);
+        if (!$publication) return response()->json([], 404);
+
+
+        if (
+            auth()->user()->id !== $publication->published_by
+            && !UserAdmin::where('user_id', auth()->user()->id)->exists()
+        ) {
+            return response()->json([], 403);
         }
 
-        $publication->update([
-            'title' => $request->title,
-            'content' => $request->content,
-            'published_by' => $published_by,
-        ]);
+        try {
+            $publication->title = $request->title;
+            $publication->content = $request->content;
+            $publication->save();
 
-        $publication->resources()->delete();
-
-        foreach ($request->resources as $resource) {
-            $publication->resources()->create([
-                'publication_id' => $publication->id,
-                'type' => $resource['type'],
-                'url' => $resource['url'],
-            ]);
+            return response()->json($publication, 200);
+        } catch (\Exception $e) {
+            return response()->json(["errors" => "Se ha producido un error al actualizar la publicación"], 500);
         }
-
-        return response()->json($publication, 200);
     }
-
-    public function destroy($id)
-    {
-        $publication = Publication::find($id);
-        if ($publication) {
-            $publication->delete();
-            return response(null, 204);
-        }
-        return response(null, 404);
-    }
-
     private function getResourceData($resources)
     {
         $data = [
-                'type' => 'image',
-                'url' => '',
-
+            'type' => 'video',
+            'url' => 'https://www.w3schools.com/html/mov_bbb.mp4',
         ];
-
         return $data;
     }
 }

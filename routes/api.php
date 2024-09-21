@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\ReaccionController;
+use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;
 
@@ -33,14 +35,14 @@ Route::group(['prefix' => 'publications'], function () {
     Route::delete('/{id}', [PublicationController::class, 'destroy'])->middleware(['auth', 'verified'])->name('publication.destroy');
 });
 
-Route::group(['prefix' => 'reacciones'], function () {
-    Route::post('/', [ReaccionController::class, 'setLike'])->name('reacciones.setLike');
-    Route::delete('/', [ReaccionController::class, 'unsetLike'])->name('reacciones.unsetLike');
+Route::group(['prefix' => 'reaction'], function () {
+    Route::post('/{id}', [ReactionController::class, 'toggleLike'])->name('reaction.toggleLike');
 });
 
-Route::group(['prefix' => 'comments'], function () {
-    Route::get('/{id}', [CommentController::class, 'listar'])->name('comentarios.listar');
-    Route::post('/', [CommentController::class, 'guardar'])->name('comentarios.guardar');
-    Route::put('/{id}', [CommentController::class, 'actualizar'])->name('comentarios.actualizar');
-    Route::delete('/{id}', [CommentController::class, 'eliminar'])->name('comentarios.eliminar');
+Route::group(['prefix' => 'users'], function () {
+    Route::get('/', [UserProfileController::class, 'index'])->name('users.index');
+    Route::get('/{id}', [UserProfileController::class, 'show'])->name('users.show');
+    Route::post('/', [UserProfileController::class, 'store'])->name('users.store');
+    Route::put('/{id}', [UserProfileController::class, 'update'])->name('users.update');
+    Route::delete('/{id}', [UserProfileController::class, 'destroy'])->name('users.destroy');
 });
