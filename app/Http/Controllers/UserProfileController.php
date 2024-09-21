@@ -129,19 +129,22 @@ class UserProfileController extends Controller
             return response()->json(["errors" => $validateData->errors()], 400);
         }
 
-        $user = UserProfile::find($id);
+        $user = UserProfile::where('user_id', $id)->first();
         if (!$user) return response()->json([], 404);
 
-        $user->update([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'country_code' => $request->country_code,
-            'biography' => $request->biography,
-            'avatar' => $request->avatar,
-        ]);
+        try {
+            $user->update([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'country_code' => $request->country_code,
+                'biography' => $request->biography ? $request->biography : $user->biography,
+                'avatar' => $request->avatar ? $request->avatar : $user->avatar,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(["errors" => "Se ha producido un error al actualizar el usuario"], 500);
+        }
 
         return response()->json($user, 200);
-
     }
 
     /**
