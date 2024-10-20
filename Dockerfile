@@ -31,6 +31,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install --optimize-autoloader --no-dev
 
 # Optimize Laravel for production
+RUN php artisan passport:keys
 RUN php artisan config:cache
 RUN php artisan route:cache
 

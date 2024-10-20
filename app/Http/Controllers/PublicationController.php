@@ -87,9 +87,8 @@ class PublicationController extends Controller
         if ($validateData->fails()) return response()->json(["errors" => $validateData->errors()], 400);
 
 
-        $publication = Publication::find($id)->loadMissing(['comments', 'reactions']);
+        $publication = Publication::find($id);
         if (!$publication) return response()->json([], 404);
-
 
         if (
             auth()->user()->id !== $publication->published_by
