@@ -1,0 +1,49 @@
+# Use PHP with Apache as the base image
+FROM php:8.2-apache
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    zip \
+    libzip-dev \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libmcrypt-dev \
+    libgd-dev \
+    jpegoptim optipng pngquant gifsicle \
+    libonig-dev \
+    libxml2-dev \
+    inotify-tools # Para la recarga automática
+
+# Instalar extensiones PHP necesarias para Laravel
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg
+RUN docker-php-ext-install pdo_mysql zip bcmath gd
+
+# Instalar Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Copiar el archivo composer.json y composer.lock (si existe)
+COPY ./composer.json /var/www/html/
+COPY ./composer.lock /var/www/html/
+
+# Definir el directorio de trabajo
+WORKDIR /var/www/html/
+
+# Instalar las dependencias del proyecto
+RUN composer install --no-interaction --no-scripts --no-autoloader
+
+# Copiar el resto del código fuente
+COPY . /var/www/html/
+
+
+# Cambiar los permisos de la carpeta storage
+RUN chown -R www-data:www-data /var/www/html/storage
+
+# Generar la clave de la aplicación (Solo para desarrollo, NO para producción)
+RUN php artisan key:generate
+
+# Comando para iniciar el servidor de desarrollo y la recarga automática
+CMD ["sh", "-c", "composer install && php artisan serve --host=0.0.0.0 --port=80 & while inotifywait -r -e modify /var/www/html --exclude '(storage|.git)' ; do php artisan cache:clear && php artisan view:clear && php artisan config:clear; done"]

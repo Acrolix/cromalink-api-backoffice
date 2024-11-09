@@ -1,0 +1,18 @@
+services:
+  api:
+    container_name: cromalink-api-backoffice
+    hostname: cromalink-api-backoffice
+    image: cromalink-api-backoffice
+    networks:
+      - cromalink
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    ports:
+      - "8100:80"
+    volumes:
+      - ./:/var/www/html
+
+networks:
+  cromalink:
+    external: true

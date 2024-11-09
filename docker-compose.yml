@@ -1,10 +1,11 @@
 services:
   api:
-    container_name: cromalink-api-backoffice-v1
+    container_name: cromalink-api-backoffice
     build:
       context: .
-      dockerfile: Dockerfile
     env_file:
       - .env
+    environment:
+      - APP_DEBUG=false
     ports:
-      - "8001:80"
+      - "8100:80"
