@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ImageHelper;
 use App\Models\UserAdmin;
 use App\Http\Requests\StoreUserAdminRequest;
 use App\Http\Requests\UpdateUserAdminRequest;
+use Illuminate\Http\Client\Request;
 
 class UserAdminController extends Controller
 {
@@ -47,9 +49,26 @@ class UserAdminController extends Controller
      * @param  \App\Models\UserAdmin  $userAdmin
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateUserAdminRequest $request, UserAdmin $userAdmin)
+    public function update(UpdateUserAdminRequest $request)
     {
-        //
+        try {
+            $user = UserAdmin::find($request->user()->id);
+            if (!$user) return response()->json(['message' => 'No se encontró el usuario'], 404);
+
+            if ($request->hasFile('avatar')) {
+                $image = ImageHelper::resize($request->file('avatar'));
+                $user->avatar = base64_encode($image->toJpeg(80));
+            }
+
+            $request->first_name && $user->first_name = $request->first_name;
+            $request->last_name && $user->last_name = $request->last_name;
+
+            $user->save();
+            return response()->json(['message' => $user], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al actualizar el perfil del usuario'], 500);
+        }
     }
 
     /**

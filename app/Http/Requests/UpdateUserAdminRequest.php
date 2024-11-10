@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateUserAdminRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class UpdateUserAdminRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,17 @@ class UpdateUserAdminRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'string|max:255',
+            'avatar' => 'image|mimes:jpeg,png,jpg|max:5120', 
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'message'   => 'Error de validación',
+            'errors'      => $validator->errors()
+        ], 400));
     }
 }

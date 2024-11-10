@@ -25,7 +25,7 @@ class AuthToken
                 return response()->json(['message' => 'Token no proporcionado'], 401);
 
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
+                'Authorization' => "Bearer $token",
                 'Accept' => 'application/json',
             ])->post(config('app.services.auth_api.url') . '/verify');
 
@@ -38,7 +38,7 @@ class AuthToken
                 return $next($request);
             }
 
-            return response()->json(['message' => 'Token inválido'], 401);
+            return response()->json(['message' => "Bearer $token"], 401);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al validar el token'], 500);
         }

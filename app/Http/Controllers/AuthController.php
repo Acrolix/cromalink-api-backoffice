@@ -2,14 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AuthHelper;
+use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    /**
+     * Login the user
+     *
+     * @param LoginRequest $request
+     * @return JsonResponse
+     */
+    public function login(LoginRequest $request): JsonResponse
+    {
+        try {
+            $credentials = $request->only('email', 'password');
+
+            
+            $user = User::where('email', $credentials['email'])->first() or null;
+
+            if (!AuthHelper::checkUserProfile($user)) 
+                return response()->json(['message' => 'Usuario y/o contraseña inválida'], 401);
+        
+            $response = AuthHelper::oAuthToken($credentials);
+
+            if (isset($response['error']))
+                return response()->json(['message' => 'Usuario y/o contraseña inválida'], 401);
+
+            $user->save_last_login();
+
+            return response()->json($response);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error en el Servidor'], 500);
+        }
+    }
+    
     public function register(Request $request)
     {
         $validatedData = Validator::make($request->all(), [
@@ -33,7 +66,7 @@ class AuthController extends Controller
 
     public function validateToken()
     {
-        return response()->json(Auth::user());
+        return response()->json(request()->user());
     }
 
     public function logout(Request $request)
@@ -46,6 +79,20 @@ class AuthController extends Controller
     public function refresh()
     {
         return $this->respondWithToken(Auth::refresh());
+    }
+
+    public function me() {
+        $user = request()->user()->load('profile');
+        $profile = [
+            'id'=> $user->id,
+            'last_login'=> $user->last_login,
+            'email'=> $user->email,
+            'first_name'=> $user->profile->first_name,
+            'last_name'=> $user->profile->last_name,
+            'role'=> $user->profile->role,
+            'avatar'=> "data:image;base64,".$user->profile->avatar,
+        ];
+        return $profile;
     }
 
     public function verifyEmail(EmailVerificationRequest $request)

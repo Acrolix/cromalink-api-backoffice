@@ -7,21 +7,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
     protected $fillable = [
+        'id',
         'email',
         'last_login',
         'password',
         'active',
+        'profile',
     ];
 
     protected $hidden = [
-        'id',
         'password',
         'remember_token',
 
@@ -31,12 +31,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function user_profile()
+    public function profile()
     {
-        return $this->hasOne(UserProfile::class, 'user_id');
+        return $this->hasOne(UserAdmin::class, 'user_id');
     }
 
-    public function saveLogin()
+    public function save_last_login()
     {
         $this->last_login = now();
         $this->save();
