@@ -10,6 +10,7 @@ class UserProfile extends Model
     use HasFactory;
 
     protected $table = 'user_profile';
+    protected $primaryKey = 'user_id';
     public $timestamps = false;
 
     protected $fillable = [
@@ -28,25 +29,13 @@ class UserProfile extends Model
     ];
 
     protected $hidden = ['biography', 'birth_date'];
+    protected $appends = [
+        'fullName',
+    ];
 
-    public function getFullName()
+    public function getFullNameAttribute()
     {
         return "{$this->first_name} {$this->last_name}";
-    }
-
-    public function getAvatar()
-    {
-        return $this->avatar ? $this->avatar : "https://www.gravatar.com/avatar/" . md5(strtolower(trim($this->email))) . "?s=200&d=identicon";
-    }
-
-    public function getBiography()
-    {
-        return $this->biography ? $this->biography : "Sin biografía";
-    }
-
-    public function getBirthDate()
-    {
-        return $this->birth_date;
     }
 
     public function user()

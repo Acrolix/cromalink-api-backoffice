@@ -5,6 +5,8 @@ use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\UserProfileController;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 use Laravel\Passport\Passport;
 
@@ -54,4 +56,22 @@ Route::group(['prefix' => 'users'], function () {
     Route::middleware('oauth')->post('/', [UserProfileController::class, 'store'])->name('users.store');
     Route::middleware('oauth')->put('/', [UserProfileController::class, 'update'])->name('users.update');
     Route::middleware('oauth')->delete('/{id}', [UserProfileController::class, 'destroy'])->name('users.destroy');
+});
+
+Route::group(['prefix' => 'media'], function () {
+    Route::get('avatars/{filename}', function ($filename) {
+        $path = storage_path("app/public/avatars/$filename");
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    });
 });

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\helpers\ImageHelper;
+use App\Http\Requests\UpdateUserProfileRequest;
 use App\Models\User;
 use App\Models\UserAdmin;
 use App\Models\UserProfile;
@@ -37,62 +39,6 @@ class UserProfileController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validateData = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'first_name' => 'required|string|max:30',
-            'last_name' => 'required|string|max:30',
-            'country_code' => 'required|string|max:4',
-            'biography' => 'text',
-            'birth_date' => 'date|required',
-            'username' => 'required|string|max:20',
-            'avatar' => 'url',
-        ]);
-
-        if ($validateData->fails()) {
-            return response()->json(["errors" => $validateData->errors()], 400);
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $user = User::create([
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'active' => true,
-            ]);
-            $userProfil = UserProfile::create([
-                'user_id' => $user->id,
-                'username' => $request->username,
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'biography' => $request->biography,
-                'birth_date' => $request->birth_date,
-                'country_code' => $request->country_code,
-                'avatar' => $request->avatar,
-            ])->with('user');
-
-            $user->sendEmailVerificationNotification();
-            $user->email_verified_at = now();
-            $user->save();
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(["errors" => "Se ha producido un error al guardar el usuario"], 500);
-        }
-
-        return response()->json($userProfil, 201);
-    }
-
-    /**
      * Display the specified resource.
      *
      * @param  \App\Models\UserProfile  $userProfile
@@ -100,12 +46,16 @@ class UserProfileController extends Controller
      */
     public function show($id)
     {
-        if (!$id) return response()->json([], 404);
+        try {
+            if (!$id) return response()->json([], 404);
 
 
-        $user = UserProfile::with(["country", "publications"])->where(['user_id' => $id])->get();
-        if (!$user->count()) return response()->json([], 404);
-        return response()->json($user, 200);
+            $user = UserProfile::with(["country", "publications"])->where(['user_id' => $id])->get();
+            if (!$user->count()) return response()->json([], 404);
+            return response()->json($user, 200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => "Se produjo un error, pónganse en contacto con un administrador"], 500);
+        }
     }
 
     /**
@@ -115,36 +65,27 @@ class UserProfileController extends Controller
      * @param  \App\Models\UserProfile  $userProfile
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateUserProfileRequest $request, $id)
     {
-        $validateData = Validator::make($request->all(), [
-            'first_name' => 'string|max:30',
-            'last_name' => 'string|max:30',
-            'country_code' => 'string|max:4',
-            'biography' => 'text',
-            'avatar' => 'url',
-        ]);
-
-        if ($validateData->fails()) {
-            return response()->json(["errors" => $validateData->errors()], 400);
-        }
-
-        $user = UserProfile::where('user_id', $id)->first();
-        if (!$user) return response()->json([], 404);
-
         try {
-            $user->update([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'country_code' => $request->country_code,
-                'biography' => $request->biography ? $request->biography : $user->biography,
-                'avatar' => $request->avatar ? $request->avatar : $user->avatar,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(["errors" => "Se ha producido un error al actualizar el usuario"], 500);
-        }
+            $user = UserProfile::find($id);
+            if (!$user) return response()->json(['message' => 'No se encontró el usuario'], 404);
 
-        return response()->json($user, 200);
+            if ($request->hasFile('avatar')) {
+                $image = ImageHelper::saveAvatar($request->file('avatar'));
+                $user->avatar = $image;
+            }
+
+            $request->first_name && $user->first_name = $request->first_name;
+            $request->last_name && $user->last_name = $request->last_name;
+            $request->biography && $user->biography = $request->biography;
+            $request->country_code && $user->country_code = $request->country_code;
+
+            $user->save();
+            return response()->json(['message' => $user], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al actualizar el perfil del usuario'], 500);
+        }
     }
 
     /**
@@ -161,6 +102,6 @@ class UserProfileController extends Controller
 
         $user->delete();
 
-        return response(null, 204);
+        return response(['message' => "Usuario eliminado correctamente"], 204);
     }
 }

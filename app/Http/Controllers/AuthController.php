@@ -90,7 +90,7 @@ class AuthController extends Controller
             'first_name'=> $user->profile->first_name,
             'last_name'=> $user->profile->last_name,
             'role'=> $user->profile->role,
-            'avatar'=> "data:image;base64,".$user->profile->avatar,
+            'avatar'=> $user->profile->avatar,
         ];
         return $profile;
     }

@@ -38,7 +38,7 @@ class AuthToken
                 return $next($request);
             }
 
-            return response()->json(['message' => "Bearer $token"], 401);
+            return response()->json(['message' => 'No tiene los permisos necesarios'], 401);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al validar el token'], 500);
         }

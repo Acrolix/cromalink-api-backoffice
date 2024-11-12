@@ -6,7 +6,7 @@ use App\Helpers\ImageHelper;
 use App\Models\UserAdmin;
 use App\Http\Requests\StoreUserAdminRequest;
 use App\Http\Requests\UpdateUserAdminRequest;
-use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Request;
 
 class UserAdminController extends Controller
 {
@@ -17,18 +17,12 @@ class UserAdminController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreUserAdminRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreUserAdminRequest $request)
-    {
-        //
+        try {
+            $users = UserAdmin::with('user')->paginate(10);
+            return response()->json($users, 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al obtener los usuarios'], 500);
+        }
     }
 
     /**
@@ -39,7 +33,8 @@ class UserAdminController extends Controller
      */
     public function show(UserAdmin $userAdmin)
     {
-        //
+        $userAdmin->load('user');
+        return response()->json($userAdmin, 200);
     }
 
     /**
@@ -56,8 +51,8 @@ class UserAdminController extends Controller
             if (!$user) return response()->json(['message' => 'No se encontró el usuario'], 404);
 
             if ($request->hasFile('avatar')) {
-                $image = ImageHelper::resize($request->file('avatar'));
-                $user->avatar = base64_encode($image->toJpeg(80));
+                $image = ImageHelper::saveAvatar($request->file('avatar'));
+                $user->avatar = $image;
             }
 
             $request->first_name && $user->first_name = $request->first_name;
@@ -65,7 +60,6 @@ class UserAdminController extends Controller
 
             $user->save();
             return response()->json(['message' => $user], 200);
-
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error al actualizar el perfil del usuario'], 500);
         }
@@ -77,8 +71,18 @@ class UserAdminController extends Controller
      * @param  \App\Models\UserAdmin  $userAdmin
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserAdmin $userAdmin)
+    public function destroy(Request $request, $id)
     {
-        //
+        try {
+            if ($request->user()->profile() != 'Admin')
+                return response()->json(['message' => 'No tienes permisos para realizar esta acción'], 403);
+            $user = UserAdmin::find($id);
+            if (!$user) return response()->json(['message' => 'No se encontró el usuario'], 404);
+
+            // $user->delete();
+            return response()->json(['message'=> 'Se elimino al usuario correctamente'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al eliminar el usuario'], 500);
+        }
     }
 }

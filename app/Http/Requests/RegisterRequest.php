@@ -26,14 +26,13 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|string|max:255|unique:user_profile,username',
+            'username' => 'required|string|max:30|unique:user_profile,username',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*.?&])[A-Za-z\d@$!%*.?&]{8,}$/',
             'password_confirmation' => 'required_with:password|string|min:8|same:password',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'birth_date' => 'required|date',
-            'country_code' => 'required|string|max:2|exists:country,code',
+            'first_name' => 'required|string|max:30',
+            'last_name' => 'required|string|max:30',
+            'role' => 'required|string|in:Admin,Moderador',
         ];
     }
     public function messages()

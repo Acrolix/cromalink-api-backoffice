@@ -20,6 +20,8 @@ class UserAdmin extends Model
         'role',
     ];
 
+    protected $hidden = [];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -39,9 +41,4 @@ class UserAdmin extends Model
     {
         return "{$this->first_name} {$this->last_name}";
     }
-
-
-
-
-
 }
