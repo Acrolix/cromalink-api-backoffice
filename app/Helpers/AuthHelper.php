@@ -1,4 +1,5 @@
 <?php
+
 namespace App\helpers;
 
 use Illuminate\Support\Facades\Http;
@@ -30,10 +31,15 @@ class AuthHelper
 
     public static function revokeAccessAndRefreshTokens($tokenId)
     {
-        $tokenRepository = app('Laravel\Passport\TokenRepository');
-        $refreshTokenRepository = app('Laravel\Passport\RefreshTokenRepository');
-        $tokenRepository->revokeAccessToken($tokenId);
-        $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
+        try {
+            $tokenRepository = resolve('Laravel\Passport\TokenRepository');
+            $refreshTokenRepository = resolve('Laravel\Passport\RefreshTokenRepository');
+            $tokenRepository->revokeAccessToken($tokenId);
+            $refreshTokenRepository->revokeRefreshTokensByAccessTokenId($tokenId);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public static function checkUserProfile($user)

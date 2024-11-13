@@ -69,16 +69,14 @@ class AuthController extends Controller
         return response()->json(request()->user());
     }
 
-    public function logout(Request $request)
-    {
-        $request->user()->token()->revoke();
-
-        return response()->json([], 200);
-    }
-
-    public function refresh()
-    {
-        return $this->respondWithToken(Auth::refresh());
+    public function logout(Request $request): JsonResponse
+    {   
+        try {
+            AuthHelper::revokeAccessAndRefreshTokens($request->user()->token_id);
+            return response()->json([], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => "Error al cerrar sesion"], 500);
+        }
     }
 
     public function me() {
@@ -127,21 +125,5 @@ class AuthController extends Controller
         if ($user) $user->sendEmailVerificationNotification();
 
         return response()->json([], 200);
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => Auth::factory()->getTTL() * 60
-        ]);
     }
 }

@@ -19,7 +19,7 @@ class PublicationController extends Controller
 
         $posts = null;
         try {
-            $posts = Publication::with(["published_by", "resources"])->withCount(['comments', 'reactions'])->where($where)->orderBy('created_at', 'desc')->paginate(50);
+            $posts = Publication::with(["published_by", "resources", "comments", "social_events", "reactions"])->withCount(['comments', 'reactions'])->where($where)->orderBy('created_at', 'desc')->paginate(50);
         } catch (\Exception $e) {
             return response()->json(["errors" => "Se ha producido un error al obtener las publicaciones"], 500);
         }
@@ -71,7 +71,7 @@ class PublicationController extends Controller
     public function show($id)
     {
         if (!$id) return response()->json([], 400);
-        $publication = Publication::with(["published_by", "comments", "resources"])->find($id)->loadMissing(['comments', 'reactions']);
+        $publication = Publication::with(["published_by", "resources", "comments", "social_events", "reactions"])->withCount(['comments', 'reactions'])->find($id)->loadMissing(['comments', 'reactions', "resources"]);
         if ($publication) return response()->json($publication, 200);
         return response()->json([], 404);
     }

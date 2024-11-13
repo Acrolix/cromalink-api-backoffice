@@ -17,7 +17,6 @@ class Publication extends Model
         'title',
         'content',
         'published_by',
-        'resources',
     ];
 
     protected $casts = [
@@ -34,7 +33,7 @@ class Publication extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comment::class, 'publication_id')->with('user')->select('publication_id', 'content', 'created_at', 'updated_at');
+        return $this->hasMany(Comment::class, 'id')->with('user');
     }
 
     public function social_events()
@@ -44,10 +43,10 @@ class Publication extends Model
 
     public function reactions()
     {
-        return $this->hasMany(Reaction::class, 'publication_id')->with('user')->select('reaction_by', 'type');
+        return $this->hasMany(Reaction::class, 'id')->with('user')->select('reaction_by', 'type');
     }
     public function resources()
     {
-        return $this->hasMany(Resource::class, 'publication_id');
+        return $this->hasMany(Resource::class, 'id');
     }
 }

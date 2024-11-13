@@ -26,7 +26,6 @@ Route::group(['prefix' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register'])->name('auth.register');
     Route::post('logout', [AuthController::class, 'logout'])->middleware('oauth')->name('auth.logout');
     Route::get('me', [AuthController::class, 'me'])->middleware('oauth')->name('auth.me');
-    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('oauth')->name('auth.refresh');
     Route::get('validate', [AuthController::class, 'validateToken'])->middleware('oauth')->name('auth.validate');
 });
 
@@ -36,6 +35,10 @@ Route::group(['prefix' => 'publications'], function () {
     Route::get('/{id}', [PublicationController::class, 'show'])->middleware(['oauth', 'verified'])->name('publication.show');
     Route::put('/{id}', [PublicationController::class, 'update'])->middleware(['oauth', 'verified'])->name('publication.update');
     Route::delete('/{id}', [PublicationController::class, 'destroy'])->middleware(['oauth', 'verified'])->name('publication.destroy');
+});
+
+Route::group(['prefix'=> 'comments'], function () {
+    Route::get('{id}', [PublicationController::class, 'index'])->middleware(['oauth'])->name('comment.show');
 });
 
 Route::group(['prefix' => 'reaction'], function () {

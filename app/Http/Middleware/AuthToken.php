@@ -33,7 +33,9 @@ class AuthToken
 
             if ($data['status'] === 'valid') {
                 $request->setUserResolver(function () use ($data) {
-                    return User::find($data['user']);
+                    $user = User::find($data['user']);
+                    $user->token_id = $user->tokens->first()->id;
+                    return $user;
                 });
                 return $next($request);
             }
