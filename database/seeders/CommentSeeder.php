@@ -15,7 +15,7 @@ class CommentSeeder extends Seeder
     public function run()
     {
         try {
-            Comment::factory(500)->create();
+            Comment::factory(200)->create();
         } catch (\Exception $e) {
             $this->command->info($e->getMessage());
         }

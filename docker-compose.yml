@@ -1,11 +1,29 @@
 services:
   api:
     container_name: cromalink-api-backoffice
+    image: cromalink-api-backoffice
+    hostname: cromalink-api-backoffice
+    networks:
+      cromalink:
+        ipv4_address: 172.18.0.21
     build:
       context: .
     env_file:
       - .env
     environment:
+      - APP_NAME='Cromalink API Backoffice'
+      - DB_HOST=cromalink_db
+      - DB_DATABASE=cromalink_db
+      - DB_USERNAME=cromalink_backoffice
+      - DB_PASSWORD=password_backoffice
+      - DB_PORT=3306
       - APP_DEBUG=false
-    ports:
-      - "8100:80"
+      - AUTH_API_URL=cromalink-api-auth/api/oauth
+
+networks:
+  cromalink:
+    external: true
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          ip_range: 172.18.0.0/20

@@ -15,7 +15,7 @@ class PublicationSeeder extends Seeder
     public function run()
     {
         try {
-            Publication::factory(500)->create();
+            Publication::factory(100)->create();
         } catch (\Exception $e) {
             $this->command->info($e->getMessage());
         }

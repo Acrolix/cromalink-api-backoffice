@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -59,7 +58,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        $user->sendEmailVerificationNotification();
+        // $user->sendEmailVerificationNotification();
 
         return response()->json([], 201);
     }

@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ResourceSeeder::class);
         $this->call(SocialEventSeeder::class);
         $this->call(EventParticipantSeeder::class);
+        $this->call(GrantOAuthPermissionsSeeder::class,);
     }
 }

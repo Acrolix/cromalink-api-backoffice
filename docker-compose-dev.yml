@@ -4,7 +4,8 @@ services:
     hostname: cromalink-api-backoffice
     image: cromalink-api-backoffice
     networks:
-      - cromalink
+      cromalink:
+        ipv4_address: 172.18.0.21
     build:
       context: .
       dockerfile: Dockerfile-dev
@@ -16,3 +17,7 @@ services:
 networks:
   cromalink:
     external: true
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          ip_range: 172.18.0.0/20

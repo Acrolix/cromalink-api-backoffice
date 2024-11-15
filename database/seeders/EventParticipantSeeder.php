@@ -15,7 +15,7 @@ class EventParticipantSeeder extends Seeder
     public function run()
     {
         try {
-            EventParticipant::factory(1000)->create();
+            EventParticipant::factory(30)->create();
         } catch (\Exception $e) {
             $this->command->info('EventParticipantSeeder already has data!');
         }
